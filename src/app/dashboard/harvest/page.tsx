@@ -105,15 +105,17 @@ export default function HarvestAnalyticsPage() {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
+                    stroke="none"
                   >
                     {billableData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
+                        stroke="none"
                       />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
