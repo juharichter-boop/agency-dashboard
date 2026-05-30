@@ -10,6 +10,7 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
@@ -18,4 +19,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(6, 20, 41);
+  color: rgb(248, 250, 252);
+}
+
+/* Theme Colors */
+:root {
+  --color-accent-primary: #84cc16; /* Lime green */
+  --color-accent-secondary: #3b82f6; /* Blue */
+  --color-success: #10b981; /* Green for positive trends */
+  --color-danger: #ef4444; /* Red for negative trends */
+  --color-warning: #f59e0b; /* Amber */
 }
