@@ -77,10 +77,10 @@ export default function ProjectsPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-white mb-2">
           Projects
         </h1>
-        <p className="text-slate-600 dark:text-slate-400">
+        <p className="text-slate-400">
           Project budget, revenue, and progress tracking
         </p>
       </div>
@@ -101,59 +101,59 @@ export default function ProjectsPage() {
           {sortedProjects.map((proj) => (
             <div
               key={proj.projectId}
-              className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6"
+              className="bg-slate-900 rounded-lg p-[15px]"
             >
               <div className="mb-6">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                    <h3 className="text-lg font-semibold text-white">
                       {proj.name}
                     </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-slate-400">
                       {proj.clientName}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-slate-900 dark:text-white">
+                    <p className="font-semibold text-white">
                       {formatCurrency(proj.revenue || 0)}
                     </p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-slate-400">
                       Revenue
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6 pb-6 border-b border-slate-200 dark:border-slate-800">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6 pb-6 border-b border-slate-800">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                  <p className="text-sm text-slate-400 mb-1">
                     Budget
                   </p>
-                  <p className="font-semibold text-slate-900 dark:text-white">
+                  <p className="font-semibold text-white">
                     {formatCurrency(proj.budget || 0)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                  <p className="text-sm text-slate-400 mb-1">
                     Spent
                   </p>
-                  <p className="font-semibold text-slate-900 dark:text-white">
+                  <p className="font-semibold text-white">
                     {formatCurrency(proj.spent || 0)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                  <p className="text-sm text-slate-400 mb-1">
                     Billable Hours
                   </p>
-                  <p className="font-semibold text-slate-900 dark:text-white">
+                  <p className="font-semibold text-white">
                     {proj.billableHours?.toFixed(1) || 0} h
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                  <p className="text-sm text-slate-400 mb-1">
                     Margin
                   </p>
-                  <p className="font-semibold text-slate-900 dark:text-white">
+                  <p className="font-semibold text-white">
                     {formatCurrency((proj.budget || 0) - (proj.spent || 0))}
                   </p>
                 </div>
@@ -161,34 +161,34 @@ export default function ProjectsPage() {
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                  <p className="text-sm text-slate-400 mb-2">
                     Task Progress
                   </p>
-                  <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-1">
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden mb-1">
                     <div
-                      className="h-full bg-blue-500"
+                      className="h-full bg-lime-500"
                       style={{
                         width: `${proj.progressRate || 0}%`,
                       }}
                     />
                   </div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">
+                  <p className="text-sm font-medium text-white">
                     {proj.progressRate?.toFixed(0) || 0}%
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                  <p className="text-sm text-slate-400 mb-2">
                     Completed Tasks
                   </p>
-                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
+                  <p className="text-lg font-semibold text-white">
                     {proj.completedTasks || 0}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                  <p className="text-sm text-slate-400 mb-2">
                     Open Tasks
                   </p>
-                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
+                  <p className="text-lg font-semibold text-white">
                     {proj.openTasks || 0}
                   </p>
                 </div>
