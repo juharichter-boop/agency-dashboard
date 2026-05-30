@@ -56,8 +56,11 @@ export async function POST(request: Request) {
     const billableHours = billableEntries.reduce((sum: number, e: any) => sum + e.hours, 0);
 
     const totalRevenue = billableEntries.reduce((sum: number, e: any) => {
-      const amount = e.billable_amount || e.amount || 0;
-      return sum + amount;
+      // Calculate revenue from billable_rate (set by task/project) or user's hourly_rate
+      const rate = e.billable_rate || e.user_assignment?.hourly_rate || 0;
+      const hours = e.hours || 0;
+      const entryRevenue = rate * hours;
+      return sum + entryRevenue;
     }, 0);
 
     console.log(`Calculated: billableHours=${billableHours}, totalRevenue=${totalRevenue}`);
