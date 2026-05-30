@@ -4,7 +4,7 @@ import { subDays } from 'date-fns';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
-async function fetchHarvestEntries() {
+async function fetchHarvestEntries(daysBack: number = 90) {
   const token = process.env.HARVEST_ACCESS_TOKEN;
   const accountId = process.env.HARVEST_ACCOUNT_ID;
 
@@ -13,7 +13,7 @@ async function fetchHarvestEntries() {
   }
 
   try {
-    const from = subDays(new Date(), 90);
+    const from = subDays(new Date(), daysBack);
     const response = await fetch(
       `https://api.harvestapp.com/v2/time_entries?from=${from.toISOString().split('T')[0]}`,
       {
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     const daysBack = body.daysBack || 90;
 
     console.log(`Fetching Harvest data for last ${daysBack} days...`);
-    const entries = await fetchHarvestEntries();
+    const entries = await fetchHarvestEntries(daysBack);
 
     const billableHours = entries
       .filter((e: any) => e.billable)

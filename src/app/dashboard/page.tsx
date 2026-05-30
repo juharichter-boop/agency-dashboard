@@ -76,7 +76,7 @@ export default function DashboardPage() {
             <KPICard
               title="Total Revenue"
               value={formatCurrency(harvestData?.totalRevenue || 0)}
-              unit="Last 90 days"
+              unit={`Last ${daysBack} days`}
             />
             <KPICard
               title="Billable Hours"
