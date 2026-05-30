@@ -7,15 +7,19 @@ export const maxDuration = 300;
 async function fetchSlackMetrics() {
   const token = process.env.SLACK_BOT_TOKEN;
   if (!token) {
+    console.error('SLACK_BOT_TOKEN not set');
     throw new Error('SLACK_BOT_TOKEN not set');
   }
 
   try {
+    console.log('Fetching Slack conversations with token:', token.substring(0, 20) + '...');
     const convResponse = await fetch('https://slack.com/api/conversations.list?exclude_archived=true', {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     });
+
+    console.log('Slack API response status:', convResponse.status);
 
     if (!convResponse.ok) {
       throw new Error(`Slack API error: ${convResponse.statusText}`);
