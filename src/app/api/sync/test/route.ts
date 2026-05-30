@@ -15,16 +15,30 @@ export async function GET() {
 
   // Test Asana
   try {
-    const asanaRes = await fetch('https://app.asana.com/api/1.0/tasks?limit=1', {
+    const userRes = await fetch('https://app.asana.com/api/1.0/users/me', {
       headers: {
         'Authorization': `Bearer ${process.env.ASANA_PERSONAL_ACCESS_TOKEN}`,
       },
     });
-    results.tests.asana = {
-      status: asanaRes.status,
-      ok: asanaRes.ok,
-      message: asanaRes.ok ? 'Connected' : 'Failed',
-    };
+
+    if (!userRes.ok) {
+      const error = await userRes.text();
+      results.tests.asana = {
+        status: userRes.status,
+        ok: false,
+        message: `User endpoint failed: ${error.substring(0, 100)}`,
+      };
+    } else {
+      const userData = await userRes.json();
+      const workspaceId = userData.data?.workspaces?.[0]?.id;
+
+      results.tests.asana = {
+        status: userRes.status,
+        ok: true,
+        workspaceId: workspaceId || 'Not found',
+        message: workspaceId ? 'Workspace found' : 'No workspaces',
+      };
+    }
   } catch (e) {
     results.tests.asana = { error: String(e) };
   }
