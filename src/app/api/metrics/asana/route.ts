@@ -106,10 +106,11 @@ export async function GET(request: NextRequest) {
 
     // Team totals
     const allTasks = await prisma.asanaTask.findMany();
-    const completed = allTasks.filter((t) => t.status === 'COMPLETED');
-    const open = allTasks.filter((t) => t.status === 'OPEN');
+    type AllTask = typeof allTasks[0];
+    const completed = allTasks.filter((t: AllTask) => t.status === 'COMPLETED');
+    const open = allTasks.filter((t: AllTask) => t.status === 'OPEN');
     const overdue = open.filter(
-      (t) => t.dueDate && new Date(t.dueDate) < new Date()
+      (t: AllTask) => t.dueDate && new Date(t.dueDate) < new Date()
     );
 
     return NextResponse.json({
