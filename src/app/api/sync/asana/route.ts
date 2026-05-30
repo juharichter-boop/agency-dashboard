@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 300; // 5 minutes timeout
+export const maxDuration = 300;
 
 async function fetchAsanaTasks() {
   const token = process.env.ASANA_PERSONAL_ACCESS_TOKEN;
@@ -34,38 +33,15 @@ export async function POST() {
     console.log('Starting Asana sync...');
     const tasks = await fetchAsanaTasks();
 
-    if (tasks.length === 0) {
-      return NextResponse.json({ message: 'No tasks found', synced: 0 });
-    }
+    const completedCount = tasks.filter((t: any) => t.completed).length;
+    const openCount = tasks.length - completedCount;
 
-    // Sync tasks to database
-    let synced = 0;
-    for (const task of tasks) {
-      try {
-        await prisma.asanaTask.upsert({
-          where: { externalId: task.gid },
-          update: {
-            name: task.name,
-            status: task.completed ? 'COMPLETED' : 'OPEN',
-            dueDate: task.due_on ? new Date(task.due_on) : null,
-            assigneeName: task.assignee?.name || null,
-          },
-          create: {
-            externalId: task.gid,
-            name: task.name,
-            status: task.completed ? 'COMPLETED' : 'OPEN',
-            dueDate: task.due_on ? new Date(task.due_on) : null,
-            assigneeName: task.assignee?.name || null,
-          },
-        });
-        synced++;
-      } catch (err) {
-        console.error(`Error syncing task ${task.gid}:`, err);
-      }
-    }
-
-    console.log(`Asana sync complete: ${synced} tasks synced`);
-    return NextResponse.json({ message: 'Asana sync complete', synced });
+    return NextResponse.json({
+      message: 'Asana sync complete',
+      synced: tasks.length,
+      completed: completedCount,
+      open: openCount,
+    });
   } catch (error) {
     console.error('Asana sync error:', error);
     return NextResponse.json(
