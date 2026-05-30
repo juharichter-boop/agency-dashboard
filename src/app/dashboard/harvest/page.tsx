@@ -43,10 +43,10 @@ export default function HarvestAnalyticsPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-white mb-2">
           Harvest Analytics
         </h1>
-        <p className="text-slate-600 dark:text-slate-400">
+        <p className="text-slate-400">
           Billable hours, revenue, and utilization metrics
         </p>
       </div>
@@ -90,8 +90,8 @@ export default function HarvestAnalyticsPage() {
           {/* Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Billable vs Non-Billable */}
-            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+            <div className="bg-slate-900 rounded-lg p-[15px]">
+              <h2 className="text-lg font-semibold text-white mb-6">
                 Hours Distribution
               </h2>
               <ResponsiveContainer width="100%" height={300}>
@@ -119,47 +119,47 @@ export default function HarvestAnalyticsPage() {
             </div>
 
             {/* Summary */}
-            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+            <div className="bg-slate-900 rounded-lg p-[15px]">
+              <h2 className="text-lg font-semibold text-white mb-6">
                 Summary
               </h2>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-sm text-slate-400">
                       Total Hours Logged
                     </span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
+                    <span className="font-semibold text-white">
                       {(data?.totalHours || 0).toFixed(1)} hours
                     </span>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-sm text-slate-400">
                       Billable Hours
                     </span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
+                    <span className="font-semibold text-white">
                       {(data?.billableHours || 0).toFixed(1)} hours
                     </span>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-sm text-slate-400">
                       Total Revenue
                     </span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
+                    <span className="font-semibold text-white">
                       {formatCurrency(data?.totalRevenue || 0, data?.currency || 'USD')}
                     </span>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-sm text-slate-400">
                       Billable Rate
                     </span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
+                    <span className="font-semibold text-white">
                       {data?.totalHours ? ((data.billableHours / data.totalHours) * 100).toFixed(0) : 0}%
                     </span>
                   </div>
@@ -169,8 +169,8 @@ export default function HarvestAnalyticsPage() {
           </div>
 
           {/* Info */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-6">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
+          <div className="bg-lime-500/10 rounded-lg p-[15px]">
+            <p className="text-sm text-lime-300">
               ✓ Real data synced from Harvest API (last 90 days)
             </p>
           </div>

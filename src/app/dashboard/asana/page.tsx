@@ -31,10 +31,10 @@ export default function AsanaAnalyticsPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-white mb-2">
           Task Progress
         </h1>
-        <p className="text-slate-600 dark:text-slate-400">
+        <p className="text-slate-400">
           Task completion and project progress
         </p>
       </div>
@@ -72,26 +72,26 @@ export default function AsanaAnalyticsPage() {
           </div>
 
           {/* Summary */}
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6 mb-8">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+          <div className="bg-slate-900 rounded-lg p-[15px] mb-8">
+            <h2 className="text-lg font-semibold text-white mb-6">
               Task Summary
             </h2>
             <div className="space-y-4">
-              <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
-                <span className="text-slate-600 dark:text-slate-400">Total Tasks</span>
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">
+              <div className="flex justify-between items-center pb-4 border-b border-slate-800">
+                <span className="text-slate-400">Total Tasks</span>
+                <span className="text-2xl font-bold text-white">
                   {data?.synced || 0}
                 </span>
               </div>
-              <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
-                <span className="text-slate-600 dark:text-slate-400">Completed</span>
-                <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <div className="flex justify-between items-center pb-4 border-b border-slate-800">
+                <span className="text-slate-400">Completed</span>
+                <span className="text-2xl font-bold text-lime-400">
                   {data?.completed || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-600 dark:text-slate-400">Open</span>
-                <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                <span className="text-slate-400">Open</span>
+                <span className="text-2xl font-bold text-lime-400">
                   {data?.open || 0}
                 </span>
               </div>
@@ -100,18 +100,18 @@ export default function AsanaAnalyticsPage() {
 
           {/* Progress Bar */}
           {data?.synced > 0 && (
-            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6 mb-8">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+            <div className="bg-slate-900 rounded-lg p-[15px] mb-8">
+              <h2 className="text-lg font-semibold text-white mb-6">
                 Completion Rate
               </h2>
               <div className="mb-2 flex justify-between">
-                <span className="text-sm text-slate-600 dark:text-slate-400">
+                <span className="text-sm text-slate-400">
                   {((data.completed / data.synced) * 100).toFixed(0)}% Complete
                 </span>
               </div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-4 bg-slate-800 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-green-500"
+                  className="h-full bg-lime-500"
                   style={{
                     width: `${(data.completed / data.synced) * 100}%`,
                   }}
@@ -121,8 +121,8 @@ export default function AsanaAnalyticsPage() {
           )}
 
           {/* Info */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-6">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
+          <div className="bg-lime-500/10 rounded-lg p-[15px]">
+            <p className="text-sm text-lime-300">
               ✓ Real data synced from Asana API
             </p>
           </div>
