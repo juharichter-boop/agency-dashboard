@@ -64,7 +64,9 @@ async function fetchSlackMetrics() {
             totalMessages += messages.length;
 
             const filesInConv = messages.filter((m: any) => m.files && m.files.length > 0).length;
-            totalFiles += filesInConv;
+            const totalFilesInConv = messages.reduce((sum: number, m: any) => sum + (m.files?.length || 0), 0);
+            console.log(`Files in ${conv.name}: messages with files=${filesInConv}, total files=${totalFilesInConv}`);
+            totalFiles += totalFilesInConv;
 
             for (const msg of messages) {
               if (msg.user) {
