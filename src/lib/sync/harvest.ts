@@ -55,13 +55,13 @@ export async function syncHarvestData(daysBack: number = 30) {
         update: {
           name: hProject.name,
           clientId,
-          budget: hProject.budget ? BigInt(Math.round(hProject.budget * 100)) : undefined,
+          budget: hProject.budget ? Math.round(hProject.budget * 100) / 100 : undefined,
         },
         create: {
           name: hProject.name,
           externalId: String(hProject.id),
           clientId,
-          budget: hProject.budget ? BigInt(Math.round(hProject.budget * 100)) : 0n,
+          budget: hProject.budget ? Math.round(hProject.budget * 100) / 100 : 0,
           status: hProject.is_active ? 'ACTIVE' : 'COMPLETED',
         },
       });
