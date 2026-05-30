@@ -33,13 +33,16 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    type UserMetric = typeof userMetrics[0];
+    type AsanaTaskMetric = UserMetric['asanaTasks'][0];
+
     const employeeAnalytics = userMetrics
-      .filter((u: typeof userMetrics[0]) => u.asanaTasks.length > 0)
-      .map((user: typeof userMetrics[0]) => {
-        const completed = user.asanaTasks.filter((t) => t.status === 'COMPLETED');
-        const open = user.asanaTasks.filter((t) => t.status === 'OPEN');
+      .filter((u: UserMetric) => u.asanaTasks.length > 0)
+      .map((user: UserMetric) => {
+        const completed = user.asanaTasks.filter((t: AsanaTaskMetric) => t.status === 'COMPLETED');
+        const open = user.asanaTasks.filter((t: AsanaTaskMetric) => t.status === 'OPEN');
         const overdue = open.filter(
-          (t) => t.dueDate && new Date(t.dueDate) < new Date()
+          (t: AsanaTaskMetric) => t.dueDate && new Date(t.dueDate) < new Date()
         );
 
         const totalTasks = user.asanaTasks.length;
@@ -56,7 +59,7 @@ export async function GET(request: NextRequest) {
         };
       });
 
-    employeeAnalytics.sort((a, b) => b.completedTasks - a.completedTasks);
+    employeeAnalytics.sort((a: typeof employeeAnalytics[0], b: typeof employeeAnalytics[0]) => b.completedTasks - a.completedTasks);
 
     // Project task metrics
     const projectMetrics = await prisma.project.findMany({
@@ -74,15 +77,17 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    type ProjectMetric = typeof projectMetrics[0];
+
     const projectAnalytics = projectMetrics
-      .filter((p) => p.asanaTasks.length > 0)
-      .map((project) => {
+      .filter((p: ProjectMetric) => p.asanaTasks.length > 0)
+      .map((project: ProjectMetric) => {
         const completed = project.asanaTasks.filter(
-          (t) => t.status === 'COMPLETED'
+          (t: ProjectMetric['asanaTasks'][0]) => t.status === 'COMPLETED'
         );
-        const open = project.asanaTasks.filter((t) => t.status === 'OPEN');
+        const open = project.asanaTasks.filter((t: ProjectMetric['asanaTasks'][0]) => t.status === 'OPEN');
         const overdue = open.filter(
-          (t) => t.dueDate && new Date(t.dueDate) < new Date()
+          (t: ProjectMetric['asanaTasks'][0]) => t.dueDate && new Date(t.dueDate) < new Date()
         );
 
         const totalTasks = project.asanaTasks.length;
