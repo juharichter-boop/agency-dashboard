@@ -68,7 +68,7 @@ export default function HarvestAnalyticsPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <KPICard
               title="Total Revenue"
-              value={formatCurrency(data?.totalRevenue || 0)}
+              value={formatCurrency(data?.totalRevenue || 0, data?.currency || 'USD')}
             />
             <KPICard
               title="Billable Hours"
@@ -150,7 +150,7 @@ export default function HarvestAnalyticsPage() {
                       Total Revenue
                     </span>
                     <span className="font-semibold text-slate-900 dark:text-white">
-                      {formatCurrency(data?.totalRevenue || 0)}
+                      {formatCurrency(data?.totalRevenue || 0, data?.currency || 'USD')}
                     </span>
                   </div>
                 </div>

@@ -75,7 +75,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <KPICard
               title="Total Revenue"
-              value={formatCurrency(harvestData?.totalRevenue || 0)}
+              value={formatCurrency(harvestData?.totalRevenue || 0, harvestData?.currency || 'USD')}
               unit={`Last ${daysBack} days`}
             />
             <KPICard
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                       Revenue
                     </span>
                     <span className="font-semibold text-slate-900 dark:text-white">
-                      {formatCurrency(harvestData?.totalRevenue || 0)}
+                      {formatCurrency(harvestData?.totalRevenue || 0, harvestData?.currency || 'USD')}
                     </span>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ export default function DashboardPage() {
                   href="/dashboard/harvest"
                   className="block text-blue-600 dark:text-blue-400 hover:underline text-sm"
                 >
-                  → Harvest Metrics ({formatCurrency(harvestData?.totalRevenue || 0)} revenue)
+                  → Harvest Metrics ({formatCurrency(harvestData?.totalRevenue || 0, harvestData?.currency || 'USD')} revenue)
                 </a>
                 <a
                   href="/dashboard/asana"

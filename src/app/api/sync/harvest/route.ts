@@ -63,7 +63,13 @@ export async function POST(request: Request) {
       return sum + entryRevenue;
     }, 0);
 
-    console.log(`Calculated: billableHours=${billableHours}, totalRevenue=${totalRevenue}`);
+    // Get currency from first entry's client
+    let currency = 'USD';
+    if (entries.length > 0 && entries[0].client?.currency) {
+      currency = entries[0].client.currency;
+    }
+
+    console.log(`Calculated: billableHours=${billableHours}, totalRevenue=${totalRevenue}, currency=${currency}`);
 
     return NextResponse.json({
       message: 'Harvest sync complete',
@@ -71,6 +77,7 @@ export async function POST(request: Request) {
       totalHours: entries.reduce((sum: number, e: any) => sum + e.hours, 0),
       billableHours,
       totalRevenue,
+      currency,
     });
   } catch (error) {
     console.error('Harvest sync error:', error);
