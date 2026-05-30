@@ -5,49 +5,42 @@ import { KPICard } from '@/components/dashboard/KPICard';
 import { DateRangePicker } from '@/components/dashboard/DateRangePicker';
 import { formatCurrency } from '@/lib/utils/calculations';
 
-interface DashboardMetrics {
-  metrics: {
-    totalBillableHours: number;
-    totalRevenue: number;
-    openTasks: number;
-    slackActivityScore: number;
-    utilizationRate: number;
-  };
-  period: {
-    from: string;
-    to: string;
-    days: number;
-  };
-}
-
 export default function DashboardPage() {
-  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
-  const [daysBack, setDaysBack] = useState(30);
+  const [harvestData, setHarvestData] = useState<any>(null);
+  const [slackData, setSlackData] = useState<any>(null);
+  const [asanaData, setAsanaData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [daysBack, setDaysBack] = useState(30);
 
   useEffect(() => {
-    const fetchMetrics = async () => {
+    const fetchAllData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `/api/metrics/dashboard?daysBack=${daysBack}`
-        );
-        if (!response.ok) {
-          console.error('API Error:', response.status, response.statusText);
-          setMetrics(null);
-          return;
+
+        // Fetch real data from sync endpoints
+        const [harvestRes, slackRes, asanaRes] = await Promise.all([
+          fetch('/api/sync/harvest', { method: 'POST' }),
+          fetch('/api/sync/slack', { method: 'POST' }),
+          fetch('/api/sync/asana', { method: 'POST' }),
+        ]);
+
+        if (harvestRes.ok) {
+          setHarvestData(await harvestRes.json());
         }
-        const data = await response.json();
-        setMetrics(data);
+        if (slackRes.ok) {
+          setSlackData(await slackRes.json());
+        }
+        if (asanaRes.ok) {
+          setAsanaData(await asanaRes.json());
+        }
       } catch (error) {
-        console.error('Error fetching metrics:', error);
-        setMetrics(null);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMetrics();
+    fetchAllData();
   }, [daysBack]);
 
   return (
@@ -70,31 +63,32 @@ export default function DashboardPage() {
       {loading ? (
         <div className="text-center py-12">
           <p className="text-slate-500 dark:text-slate-400">
-            Loading metrics...
+            Syncing real data from your APIs...
           </p>
         </div>
-      ) : metrics ? (
+      ) : (
         <>
           {/* KPI Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <KPICard
               title="Total Revenue"
-              value={formatCurrency(metrics.metrics.totalRevenue)}
-              unit="Last 30 days"
+              value={formatCurrency(harvestData?.totalRevenue || 0)}
+              unit="Last 90 days"
             />
             <KPICard
               title="Billable Hours"
-              value={metrics.metrics.totalBillableHours.toFixed(1)}
+              value={((harvestData?.billableHours || 0).toFixed(1))}
               unit="hours"
             />
             <KPICard
-              title="Utilization Rate"
-              value={`${metrics.metrics.utilizationRate}%`}
+              title="Open Tasks"
+              value={asanaData?.open || 0}
+              unit="tasks"
             />
             <KPICard
-              title="Open Tasks"
-              value={metrics.metrics.openTasks}
-              unit="tasks"
+              title="Slack Activity"
+              value={slackData?.metrics?.totalMessages || 0}
+              unit="messages"
             />
           </div>
 
@@ -102,28 +96,37 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6">
               <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-                Team Activity
+                Harvest Metrics
               </h2>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between mb-1">
                     <span className="text-sm text-slate-600 dark:text-slate-400">
-                      Slack Messages
+                      Total Hours
                     </span>
                     <span className="font-semibold text-slate-900 dark:text-white">
-                      {metrics.metrics.slackActivityScore}
+                      {(harvestData?.totalHours || 0).toFixed(1)} hrs
                     </span>
                   </div>
-                  <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-500"
-                      style={{
-                        width: `${Math.min(
-                          100,
-                          (metrics.metrics.slackActivityScore / 1000) * 100
-                        )}%`,
-                      }}
-                    />
+                </div>
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                      Billable Hours
+                    </span>
+                    <span className="font-semibold text-slate-900 dark:text-white">
+                      {(harvestData?.billableHours || 0).toFixed(1)} hrs
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                      Revenue
+                    </span>
+                    <span className="font-semibold text-slate-900 dark:text-white">
+                      {formatCurrency(harvestData?.totalRevenue || 0)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -138,30 +141,24 @@ export default function DashboardPage() {
                   href="/dashboard/slack"
                   className="block text-blue-600 dark:text-blue-400 hover:underline text-sm"
                 >
-                  → Slack Analytics
+                  → Slack Analytics ({slackData?.metrics?.totalMessages || 0} messages)
                 </a>
                 <a
                   href="/dashboard/harvest"
                   className="block text-blue-600 dark:text-blue-400 hover:underline text-sm"
                 >
-                  → Harvest Metrics
+                  → Harvest Metrics ({formatCurrency(harvestData?.totalRevenue || 0)} revenue)
                 </a>
                 <a
                   href="/dashboard/asana"
                   className="block text-blue-600 dark:text-blue-400 hover:underline text-sm"
                 >
-                  → Task Progress
+                  → Task Progress ({asanaData?.open || 0} open tasks)
                 </a>
               </div>
             </div>
           </div>
         </>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-red-600 dark:text-red-400">
-            Failed to load metrics. Please try again.
-          </p>
-        </div>
       )}
     </div>
   );
