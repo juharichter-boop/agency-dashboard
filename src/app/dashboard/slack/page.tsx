@@ -21,41 +21,18 @@ interface SlackMetrics {
 }
 
 export default function SlackAnalyticsPage() {
-  const [metrics, setMetrics] = useState<SlackMetrics | null>(null);
   const [daysBack, setDaysBack] = useState(7);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `/api/metrics/slack?daysBack=${daysBack}`
-        );
-        if (!response.ok) {
-          throw new Error('Failed to fetch');
-        }
-        const data = await response.json();
-        setMetrics(data);
-      } catch (error) {
-        console.error('Error fetching Slack metrics:', error);
-        // Use mock data
-        setMetrics({
-          userMetrics: [
-            { name: 'Alice', totalMessages: 245, totalFiles: 12, avgMessagesPerDay: 35 },
-            { name: 'Bob', totalMessages: 198, totalFiles: 8, avgMessagesPerDay: 28 },
-            { name: 'Carol', totalMessages: 167, totalFiles: 5, avgMessagesPerDay: 24 },
-          ],
-          heatmapData: { 'Mon': 156, 'Tue': 142, 'Wed': 167, 'Thu': 145, 'Fri': 134 },
-          summary: { totalMessages: 1256, totalFiles: 45, activeUsers: 12 },
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMetrics();
-  }, [daysBack]);
+  // Mock data - using directly without API calls
+  const metrics: SlackMetrics = {
+    userMetrics: [
+      { name: 'Alice', totalMessages: 245, totalFiles: 12, avgMessagesPerDay: 35 },
+      { name: 'Bob', totalMessages: 198, totalFiles: 8, avgMessagesPerDay: 28 },
+      { name: 'Carol', totalMessages: 167, totalFiles: 5, avgMessagesPerDay: 24 },
+    ],
+    heatmapData: { 'Mon': 156, 'Tue': 142, 'Wed': 167, 'Thu': 145, 'Fri': 134 },
+    summary: { totalMessages: 1256, totalFiles: 45, activeUsers: 12 },
+  };
 
   const chartData = metrics?.userMetrics?.slice(0, 10) || [];
 
@@ -76,14 +53,7 @@ export default function SlackAnalyticsPage() {
         <DateRangePicker onDaysChange={setDaysBack} defaultDays={daysBack} />
       </div>
 
-      {loading ? (
-        <div className="text-center py-12">
-          <p className="text-slate-500 dark:text-slate-400">
-            Loading metrics...
-          </p>
-        </div>
-      ) : metrics ? (
-        <>
+      <>
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <KPICard
@@ -170,14 +140,7 @@ export default function SlackAnalyticsPage() {
               ))}
             </div>
           </div>
-        </>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-red-600 dark:text-red-400">
-            Failed to load metrics. Please try again.
-          </p>
-        </div>
-      )}
+      </>
     </div>
   );
 }
