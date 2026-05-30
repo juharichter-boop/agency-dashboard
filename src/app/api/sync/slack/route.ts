@@ -25,6 +25,7 @@ async function fetchSlackMetrics() {
 
     if (!convData.ok) {
       // Token doesn't have permission to list conversations, return placeholder
+      console.log('Conversations list not OK:', convData.error);
       return {
         totalMessages: 0,
         totalFiles: 0,
@@ -33,6 +34,7 @@ async function fetchSlackMetrics() {
     }
 
     const conversations = convData.channels || [];
+    console.log(`Found ${conversations.length} conversations`);
     let totalMessages = 0;
     let totalFiles = 0;
     const users = new Set<string>();
@@ -42,6 +44,7 @@ async function fetchSlackMetrics() {
 
     for (const conv of conversations.slice(0, 5)) {
       try {
+        console.log(`Fetching history for channel ${conv.id} (${conv.name})...`);
         const historyResponse = await fetch(
           `https://slack.com/api/conversations.history?channel=${conv.id}&oldest=${sevenDaysAgo}&limit=100`,
           {
@@ -53,8 +56,11 @@ async function fetchSlackMetrics() {
 
         if (historyResponse.ok) {
           const historyData = await historyResponse.json();
+          console.log(`Channel ${conv.id} history response:`, historyData.ok ? 'OK' : historyData.error);
+
           if (historyData.ok) {
             const messages = historyData.messages || [];
+            console.log(`Found ${messages.length} messages in ${conv.name}`);
             totalMessages += messages.length;
 
             const filesInConv = messages.filter((m: any) => m.files && m.files.length > 0).length;
@@ -65,7 +71,13 @@ async function fetchSlackMetrics() {
                 users.add(msg.user);
               }
             }
+          } else if (historyData.error === 'not_in_channel') {
+            console.log(`Bot is not a member of ${conv.name} - add bot to channel to read history`);
+          } else {
+            console.error(`History error for ${conv.id}: ${historyData.error}`);
           }
+        } else {
+          console.error(`History response not OK for ${conv.id}`);
         }
       } catch (err) {
         console.error(`Error fetching channel ${conv.id}:`, err);
