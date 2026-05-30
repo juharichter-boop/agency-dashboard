@@ -73,28 +73,55 @@ export default function SlackAnalyticsPage() {
           </div>
 
           {/* Charts */}
-          <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6 mb-8">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
-              Activity Summary
-            </h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
-                <span className="text-slate-600 dark:text-slate-400">Total Messages (Last 7 days)</span>
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {data?.metrics?.totalMessages || 0}
-                </span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Activity Summary */}
+            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+                Activity Summary
+              </h2>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
+                  <span className="text-slate-600 dark:text-slate-400">Total Messages (Last 7 days)</span>
+                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {data?.metrics?.totalMessages || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
+                  <span className="text-slate-600 dark:text-slate-400">Files Shared</span>
+                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {data?.metrics?.totalFiles || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600 dark:text-slate-400">Active Contributors</span>
+                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {data?.metrics?.activeUsers || 0}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
-                <span className="text-slate-600 dark:text-slate-400">Files Shared</span>
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {data?.metrics?.totalFiles || 0}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600 dark:text-slate-400">Active Contributors</span>
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                  {data?.metrics?.activeUsers || 0}
-                </span>
+            </div>
+
+            {/* Channel Breakdown */}
+            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+                Channel Activity
+              </h2>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {data?.channelBreakdown && data.channelBreakdown.length > 0 ? (
+                  data.channelBreakdown.map((channel: any, idx: number) => (
+                    <div key={idx} className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                      <div>
+                        <p className="text-sm font-medium text-slate-900 dark:text-white">#{channel.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{channel.activeUsers} users</p>
+                      </div>
+                      <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                        {channel.messages}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No channel data</p>
+                )}
               </div>
             </div>
           </div>

@@ -38,6 +38,7 @@ async function fetchSlackMetrics() {
     let totalMessages = 0;
     let totalFiles = 0;
     const users = new Set<string>();
+    const channelBreakdown: any[] = [];
 
     // Get message counts from channels
     const sevenDaysAgo = Math.floor(subDays(new Date(), 7).getTime() / 1000);
@@ -68,13 +69,32 @@ async function fetchSlackMetrics() {
             console.log(`Files in ${conv.name}: messages with files=${filesInConv}, total files=${totalFilesInConv}`);
             totalFiles += totalFilesInConv;
 
+            const channelUsers = new Set<string>();
             for (const msg of messages) {
               if (msg.user) {
                 users.add(msg.user);
+                channelUsers.add(msg.user);
               }
             }
+
+            // Add to channel breakdown
+            channelBreakdown.push({
+              id: conv.id,
+              name: conv.name,
+              messages: messages.length,
+              files: totalFilesInConv,
+              activeUsers: channelUsers.size,
+            });
           } else if (historyData.error === 'not_in_channel') {
             console.log(`Bot is not a member of ${conv.name} - add bot to channel to read history`);
+            // Still include channel with 0 data
+            channelBreakdown.push({
+              id: conv.id,
+              name: conv.name,
+              messages: 0,
+              files: 0,
+              activeUsers: 0,
+            });
           } else {
             console.error(`History error for ${conv.id}: ${historyData.error}`);
           }
@@ -87,30 +107,38 @@ async function fetchSlackMetrics() {
     }
 
     return {
-      totalMessages,
-      totalFiles,
-      activeUsers: users.size,
+      metrics: {
+        totalMessages,
+        totalFiles,
+        activeUsers: users.size,
+      },
+      channelBreakdown,
     };
   } catch (error) {
     console.error('Error fetching Slack metrics:', error);
-    return { totalMessages: 0, totalFiles: 0, activeUsers: 0 };
+    return {
+      metrics: { totalMessages: 0, totalFiles: 0, activeUsers: 0 },
+      channelBreakdown: [],
+    };
   }
 }
 
 export async function POST() {
   try {
     console.log('Starting Slack sync...');
-    const metrics = await fetchSlackMetrics();
+    const data = await fetchSlackMetrics();
 
     return NextResponse.json({
       message: 'Slack sync complete',
-      metrics,
+      metrics: data.metrics,
+      channelBreakdown: data.channelBreakdown,
     });
   } catch (error) {
     console.error('Slack sync error:', error);
     return NextResponse.json({
       message: 'Slack sync failed',
       metrics: { totalMessages: 0, totalFiles: 0, activeUsers: 0 },
+      channelBreakdown: [],
     });
   }
 }
