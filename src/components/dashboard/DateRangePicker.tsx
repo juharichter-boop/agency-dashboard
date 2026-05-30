@@ -32,7 +32,7 @@ export function DateRangePicker({
       {options.map((option) => (
         <Button
           key={option.days}
-          variant={selected === option.days ? 'default' : 'outline'}
+          variant={selected === option.days ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => handleChange(option.days)}
         >
