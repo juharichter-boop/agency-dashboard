@@ -19,7 +19,10 @@ export default function DashboardPage() {
 
         // Fetch real data from sync endpoints
         const [harvestRes, slackRes, asanaRes] = await Promise.all([
-          fetch('/api/sync/harvest', { method: 'POST' }),
+          fetch('/api/sync/harvest', {
+            method: 'POST',
+            body: JSON.stringify({ daysBack })
+          }),
           fetch('/api/sync/slack', { method: 'POST' }),
           fetch('/api/sync/asana', { method: 'POST' }),
         ]);

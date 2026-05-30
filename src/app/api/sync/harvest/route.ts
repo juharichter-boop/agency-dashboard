@@ -36,9 +36,13 @@ async function fetchHarvestEntries() {
   }
 }
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     console.log('Starting Harvest sync...');
+    const body = await request.json().catch(() => ({}));
+    const daysBack = body.daysBack || 90;
+
+    console.log(`Fetching Harvest data for last ${daysBack} days...`);
     const entries = await fetchHarvestEntries();
 
     const billableHours = entries
