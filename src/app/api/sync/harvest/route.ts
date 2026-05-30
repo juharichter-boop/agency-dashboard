@@ -29,7 +29,12 @@ async function fetchHarvestEntries(daysBack: number = 90) {
     }
 
     const data = await response.json();
-    return data.time_entries || [];
+    const entries = data.time_entries || [];
+    console.log(`Fetched ${entries.length} time entries from Harvest`);
+    if (entries.length > 0) {
+      console.log('Sample entry:', JSON.stringify(entries[0], null, 2));
+    }
+    return entries;
   } catch (error) {
     console.error('Error fetching Harvest entries:', error);
     return [];
@@ -45,13 +50,17 @@ export async function POST(request: Request) {
     console.log(`Fetching Harvest data for last ${daysBack} days...`);
     const entries = await fetchHarvestEntries(daysBack);
 
-    const billableHours = entries
-      .filter((e: any) => e.billable)
-      .reduce((sum: number, e: any) => sum + e.hours, 0);
+    const billableEntries = entries.filter((e: any) => e.billable);
+    console.log(`Found ${billableEntries.length} billable entries`);
 
-    const totalRevenue = entries
-      .filter((e: any) => e.billable)
-      .reduce((sum: number, e: any) => sum + (e.billable_amount || 0), 0);
+    const billableHours = billableEntries.reduce((sum: number, e: any) => sum + e.hours, 0);
+
+    const totalRevenue = billableEntries.reduce((sum: number, e: any) => {
+      const amount = e.billable_amount || e.amount || 0;
+      return sum + amount;
+    }, 0);
+
+    console.log(`Calculated: billableHours=${billableHours}, totalRevenue=${totalRevenue}`);
 
     return NextResponse.json({
       message: 'Harvest sync complete',
