@@ -19,19 +19,28 @@ export async function POST() {
 
     try {
       // Try to fetch from Asana
+      console.log('Fetching Asana user info...');
       const userRes = await fetch('https://app.asana.com/api/1.0/users/me', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
 
+      console.log(`User response status: ${userRes.status}`);
+
       if (userRes.ok) {
         const userData = await userRes.json();
-        const workspaceId = userData.data?.workspaces?.[0]?.id;
+        console.log('User data received:', userData.data ? 'OK' : 'Empty');
+        // Asana uses 'gid' (global ID) not 'id'
+        const workspaceId = userData.data?.workspaces?.[0]?.gid;
+        console.log(`Workspace ID: ${workspaceId}`);
 
         if (workspaceId) {
+          const userId = userData.data?.gid;
+          console.log(`Fetching tasks assigned to user ${userId} in workspace ${workspaceId}...`);
+          // Get tasks assigned to the current user in the workspace
           const tasksRes = await fetch(
-            `https://app.asana.com/api/1.0/workspaces/${workspaceId}/tasks?limit=50`,
+            `https://app.asana.com/api/1.0/tasks?assignee=${userId}&workspace=${workspaceId}&limit=50`,
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -39,9 +48,12 @@ export async function POST() {
             }
           );
 
+          console.log(`Tasks response status: ${tasksRes.status}`);
+
           if (tasksRes.ok) {
             const tasksData = await tasksRes.json();
             const tasks = tasksData.data || [];
+            console.log(`Found ${tasks.length} tasks`);
             const completedCount = tasks.filter((t: any) => t.completed).length;
 
             return NextResponse.json({
@@ -50,8 +62,16 @@ export async function POST() {
               completed: completedCount,
               open: tasks.length - completedCount,
             });
+          } else {
+            const errorData = await tasksRes.json();
+            console.error('Tasks API error response:', errorData);
           }
+        } else {
+          console.log('No workspace found in user data');
         }
+      } else {
+        const errorData = await userRes.json();
+        console.error('User API error response:', errorData);
       }
     } catch (apiError) {
       console.error('Asana API error:', apiError);
