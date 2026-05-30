@@ -17,7 +17,10 @@ export default function HarvestAnalyticsPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/sync/harvest', { method: 'POST' });
+        const response = await fetch('/api/sync/harvest', {
+          method: 'POST',
+          body: JSON.stringify({ daysBack })
+        });
         if (response.ok) {
           setData(await response.json());
         }
