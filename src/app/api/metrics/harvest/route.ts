@@ -39,10 +39,10 @@ export async function GET(request: NextRequest) {
         const billableEntries = user.harvestEntries.filter((e: HarvestEntry) => e.billable);
         const nonBillableEntries = user.harvestEntries.filter((e: HarvestEntry) => !e.billable);
 
-        const billableHours = billableEntries.reduce((sum, e: HarvestEntry) => sum + Number(e.hours), 0);
-        const nonBillableHours = nonBillableEntries.reduce((sum, e: HarvestEntry) => sum + Number(e.hours), 0);
+        const billableHours = billableEntries.reduce((sum: number, e: HarvestEntry) => sum + Number(e.hours), 0);
+        const nonBillableHours = nonBillableEntries.reduce((sum: number, e: HarvestEntry) => sum + Number(e.hours), 0);
         const totalHours = billableHours + nonBillableHours;
-        const billableAmount = billableEntries.reduce((sum, e: HarvestEntry) => sum + Number(e.amount), 0);
+        const billableAmount = billableEntries.reduce((sum: number, e: HarvestEntry) => sum + Number(e.amount), 0);
 
         return {
           userId: user.id,
@@ -81,10 +81,10 @@ export async function GET(request: NextRequest) {
       .map((project: ProjectMetric) => {
         const billableHours = project.harvestEntries
           .filter((e: ProjectHarvestEntry) => e.billable)
-          .reduce((sum, e: ProjectHarvestEntry) => sum + Number(e.hours), 0);
+          .reduce((sum: number, e: ProjectHarvestEntry) => sum + Number(e.hours), 0);
         const revenue = project.harvestEntries
           .filter((e: ProjectHarvestEntry) => e.billable)
-          .reduce((sum, e: ProjectHarvestEntry) => sum + Number(e.amount), 0);
+          .reduce((sum: number, e: ProjectHarvestEntry) => sum + Number(e.amount), 0);
         const budget = Number(project.budget);
         const spent = revenue;
 
@@ -110,13 +110,13 @@ export async function GET(request: NextRequest) {
 
     const billableHours = allEntries
       .filter((e: AllEntry) => e.billable)
-      .reduce((sum, e: AllEntry) => sum + Number(e.hours), 0);
+      .reduce((sum: number, e: AllEntry) => sum + Number(e.hours), 0);
     const nonBillableHours = allEntries
       .filter((e: AllEntry) => !e.billable)
-      .reduce((sum, e: AllEntry) => sum + Number(e.hours), 0);
+      .reduce((sum: number, e: AllEntry) => sum + Number(e.hours), 0);
     const totalRevenue = allEntries
       .filter((e: AllEntry) => e.billable)
-      .reduce((sum, e: AllEntry) => sum + Number(e.amount), 0);
+      .reduce((sum: number, e: AllEntry) => sum + Number(e.amount), 0);
     const totalHours = billableHours + nonBillableHours;
 
     return NextResponse.json({

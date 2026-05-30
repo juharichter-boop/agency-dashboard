@@ -38,11 +38,11 @@ export async function GET(request: NextRequest) {
 
     const analyticsData = userMetrics.map((user: UserMetric) => {
       const totalMessages = user.slackMetrics.reduce(
-        (sum, m: SlackMetric) => sum + m.messageCount,
+        (sum: number, m: SlackMetric) => sum + m.messageCount,
         0
       );
       const totalFiles = user.slackMetrics.reduce(
-        (sum, m: SlackMetric) => sum + m.fileCount,
+        (sum: number, m: SlackMetric) => sum + m.fileCount,
         0
       );
       const avgMessagesPerDay = daysBack > 0 ? totalMessages / daysBack : 0;
@@ -89,11 +89,11 @@ export async function GET(request: NextRequest) {
       heatmapData,
       summary: {
         totalMessages: analyticsData.reduce(
-          (sum, u: typeof analyticsData[0]) => sum + u.totalMessages,
+          (sum: number, u: typeof analyticsData[0]) => sum + u.totalMessages,
           0
         ),
         totalFiles: analyticsData.reduce(
-          (sum, u: typeof analyticsData[0]) => sum + u.totalFiles,
+          (sum: number, u: typeof analyticsData[0]) => sum + u.totalFiles,
           0
         ),
         activeUsers: analyticsData.length,
