@@ -32,10 +32,16 @@ export default function DashboardPage() {
         const response = await fetch(
           `/api/metrics/dashboard?daysBack=${daysBack}`
         );
+        if (!response.ok) {
+          console.error('API Error:', response.status, response.statusText);
+          setMetrics(null);
+          return;
+        }
         const data = await response.json();
         setMetrics(data);
       } catch (error) {
         console.error('Error fetching metrics:', error);
+        setMetrics(null);
       } finally {
         setLoading(false);
       }
