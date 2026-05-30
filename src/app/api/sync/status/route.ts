@@ -14,8 +14,10 @@ export async function GET() {
 
     const syncLogs = await prisma.syncLog.findMany();
 
+    type SyncLog = typeof syncLogs[0];
+
     return NextResponse.json({
-      syncs: syncLogs.map((log) => ({
+      syncs: syncLogs.map((log: SyncLog) => ({
         entityType: log.entityType,
         status: log.status,
         lastSyncedAt: log.lastSyncedAt,
