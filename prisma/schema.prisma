@@ -89,9 +89,9 @@ model HarvestEntry {
   project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   date          DateTime
-  hours         Decimal  @db.Numeric(10, 2)
+  hours         Decimal  @db.Decimal(10, 2)
   billable      Boolean  @default(true)
-  amount        Decimal  @db.Numeric(12, 2) @default(0)
+  amount        Decimal  @db.Decimal(12, 2) @default(0)
   status        EntryStatus @default(UNINVOICED)
 
   createdAt     DateTime @default(now())
@@ -132,7 +132,7 @@ model Project {
   clientId      String?
   client        Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
 
-  budget        Decimal  @db.Numeric(12, 2) @default(0)
+  budget        Decimal  @db.Decimal(12, 2) @default(0)
   status        ProjectStatus @default(ACTIVE)
 
   harvestEntries HarvestEntry[]
