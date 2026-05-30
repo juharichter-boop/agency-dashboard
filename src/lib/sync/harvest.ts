@@ -86,18 +86,18 @@ export async function syncHarvestData(daysBack: number = 30) {
             id: `harvest-${entry.id}`,
           },
           update: {
-            hours: BigInt(Math.round(entry.hours * 100)),
+            hours: Math.round(entry.hours * 100) / 100,
             billable: entry.billable,
-            amount: BigInt(Math.round(amount * 100)),
+            amount: Math.round(amount * 100) / 100,
           },
           create: {
             id: `harvest-${entry.id}`,
             userId: dbUser.id,
             projectId: dbProject.id,
             date: new Date(entry.spent_date),
-            hours: BigInt(Math.round(entry.hours * 100)),
+            hours: Math.round(entry.hours * 100) / 100,
             billable: entry.billable,
-            amount: BigInt(Math.round(amount * 100)),
+            amount: Math.round(amount * 100) / 100,
           },
         });
       }
