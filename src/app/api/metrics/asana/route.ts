@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     const employeeAnalytics = userMetrics
       .filter((u: typeof userMetrics[0]) => u.asanaTasks.length > 0)
-      .map((user) => {
+      .map((user: typeof userMetrics[0]) => {
         const completed = user.asanaTasks.filter((t) => t.status === 'COMPLETED');
         const open = user.asanaTasks.filter((t) => t.status === 'OPEN');
         const overdue = open.filter(
