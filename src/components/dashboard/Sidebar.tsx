@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, MessageSquare, CheckSquare, Zap, Settings } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, CheckSquare, Zap } from 'lucide-react';
 
 interface NavItem {
   name: string;
@@ -31,26 +31,21 @@ const navItems: NavItem[] = [
     href: '/dashboard/harvest',
     icon: <Zap size={20} />,
   },
-  {
-    name: 'Settings',
-    href: '/dashboard/settings',
-    icon: <Settings size={20} />,
-  },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 h-screen flex flex-col sticky top-0">
+    <aside className="w-64 bg-slate-900 h-screen flex flex-col sticky top-0">
       {/* Logo Section */}
-      <div className="p-6 border-b border-slate-800">
+      <div className="p-[15px]">
         <h1 className="text-xl font-bold text-white">Uhura Digital</h1>
         <p className="text-xs text-slate-400 mt-1">Agency Operations</p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-[15px] space-y-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
           return (
@@ -59,7 +54,7 @@ export function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-lime-500/20 text-lime-400 border border-lime-500/30'
+                  ? 'bg-lime-500/20 text-lime-400'
                   : 'text-slate-300 hover:text-slate-50 hover:bg-slate-800/50'
               }`}
             >
@@ -72,10 +67,6 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-slate-800">
-        <p className="text-xs text-slate-500 text-center">v1.0</p>
-      </div>
     </aside>
   );
 }

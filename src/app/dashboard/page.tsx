@@ -98,7 +98,7 @@ export default function DashboardPage() {
 
           {/* Secondary Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-slate-900 rounded-lg border border-slate-800 p-6">
+            <div className="bg-slate-900 rounded-lg p-[15px]">
               <h2 className="text-lg font-bold text-white mb-6">
                 Harvest Summary
               </h2>
@@ -130,28 +130,28 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="bg-slate-900 rounded-lg border border-slate-800 p-6">
+            <div className="bg-slate-900 rounded-lg p-[15px]">
               <h2 className="text-lg font-bold text-white mb-6">
                 Navigation
               </h2>
               <div className="space-y-3">
                 <a
                   href="/dashboard/slack"
-                  className="block px-4 py-3 bg-slate-800/50 hover:bg-slate-800 rounded-lg text-lime-400 hover:text-lime-300 transition-colors border border-slate-700 hover:border-lime-500/50 text-sm font-medium"
+                  className="block px-4 py-3 bg-slate-800/50 hover:bg-slate-800 rounded-lg text-lime-400 hover:text-lime-300 transition-colors text-sm font-medium"
                 >
                   📊 Slack Analytics
                   <span className="text-slate-400 block text-xs mt-1">{slackData?.metrics?.totalMessages || 0} messages</span>
                 </a>
                 <a
                   href="/dashboard/harvest"
-                  className="block px-4 py-3 bg-slate-800/50 hover:bg-slate-800 rounded-lg text-lime-400 hover:text-lime-300 transition-colors border border-slate-700 hover:border-lime-500/50 text-sm font-medium"
+                  className="block px-4 py-3 bg-slate-800/50 hover:bg-slate-800 rounded-lg text-lime-400 hover:text-lime-300 transition-colors text-sm font-medium"
                 >
                   💰 Harvest Details
                   <span className="text-slate-400 block text-xs mt-1">{formatCurrency(harvestData?.totalRevenue || 0, harvestData?.currency || 'USD')}</span>
                 </a>
                 <a
                   href="/dashboard/asana"
-                  className="block px-4 py-3 bg-slate-800/50 hover:bg-slate-800 rounded-lg text-lime-400 hover:text-lime-300 transition-colors border border-slate-700 hover:border-lime-500/50 text-sm font-medium"
+                  className="block px-4 py-3 bg-slate-800/50 hover:bg-slate-800 rounded-lg text-lime-400 hover:text-lime-300 transition-colors text-sm font-medium"
                 >
                   ✓ Task Progress
                   <span className="text-slate-400 block text-xs mt-1">{asanaData?.open || 0} open tasks</span>

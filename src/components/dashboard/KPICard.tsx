@@ -22,7 +22,7 @@ export function KPICard({
   className = '',
 }: KPICardProps) {
   return (
-    <div className={`bg-slate-900 rounded-lg border border-slate-800 p-6 hover:border-slate-700 transition-colors ${className}`}>
+    <div className={`bg-slate-900 rounded-lg p-[15px] transition-colors ${className}`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
