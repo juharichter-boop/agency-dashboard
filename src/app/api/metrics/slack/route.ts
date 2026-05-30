@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
-import { subDays, startOfDay, endOfDay } from 'date-fns';
+import { subDays } from 'date-fns';
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,13 +33,16 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const analyticsData = userMetrics.map((user) => {
+    type UserMetric = typeof userMetrics[0];
+    type SlackMetric = UserMetric['slackMetrics'][0];
+
+    const analyticsData = userMetrics.map((user: UserMetric) => {
       const totalMessages = user.slackMetrics.reduce(
-        (sum, m) => sum + m.messageCount,
+        (sum, m: SlackMetric) => sum + m.messageCount,
         0
       );
       const totalFiles = user.slackMetrics.reduce(
-        (sum, m) => sum + m.fileCount,
+        (sum, m: SlackMetric) => sum + m.fileCount,
         0
       );
       const avgMessagesPerDay = daysBack > 0 ? totalMessages / daysBack : 0;
@@ -56,15 +59,17 @@ export async function GET(request: NextRequest) {
     });
 
     // Sort by total messages descending
-    analyticsData.sort((a, b) => b.totalMessages - a.totalMessages);
+    analyticsData.sort((a: typeof analyticsData[0], b: typeof analyticsData[0]) => b.totalMessages - a.totalMessages);
 
     // Get activity heatmap data (messages by day of week and hour)
     const allMetrics = await prisma.slackMetric.findMany({
       where: { date: { gte: dateFrom } },
     });
 
+    type AllMetric = typeof allMetrics[0];
+
     const heatmapData = allMetrics.reduce(
-      (acc, metric) => {
+      (acc: Record<string, number>, metric: AllMetric) => {
         const dayOfWeek = metric.date.toLocaleDateString('en-US', {
           weekday: 'short',
         });
@@ -84,11 +89,11 @@ export async function GET(request: NextRequest) {
       heatmapData,
       summary: {
         totalMessages: analyticsData.reduce(
-          (sum, u) => sum + u.totalMessages,
+          (sum, u: typeof analyticsData[0]) => sum + u.totalMessages,
           0
         ),
         totalFiles: analyticsData.reduce(
-          (sum, u) => sum + u.totalFiles,
+          (sum, u: typeof analyticsData[0]) => sum + u.totalFiles,
           0
         ),
         activeUsers: analyticsData.length,

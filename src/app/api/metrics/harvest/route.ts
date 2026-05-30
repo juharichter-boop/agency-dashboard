@@ -30,16 +30,19 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const employeeAnalytics = userMetrics
-      .filter((u) => u.harvestEntries.length > 0)
-      .map((user) => {
-        const billableEntries = user.harvestEntries.filter((e) => e.billable);
-        const nonBillableEntries = user.harvestEntries.filter((e) => !e.billable);
+    type UserMetric = typeof userMetrics[0];
+    type HarvestEntry = UserMetric['harvestEntries'][0];
 
-        const billableHours = billableEntries.reduce((sum, e) => sum + Number(e.hours), 0);
-        const nonBillableHours = nonBillableEntries.reduce((sum, e) => sum + Number(e.hours), 0);
+    const employeeAnalytics = userMetrics
+      .filter((u: UserMetric) => u.harvestEntries.length > 0)
+      .map((user: UserMetric) => {
+        const billableEntries = user.harvestEntries.filter((e: HarvestEntry) => e.billable);
+        const nonBillableEntries = user.harvestEntries.filter((e: HarvestEntry) => !e.billable);
+
+        const billableHours = billableEntries.reduce((sum, e: HarvestEntry) => sum + Number(e.hours), 0);
+        const nonBillableHours = nonBillableEntries.reduce((sum, e: HarvestEntry) => sum + Number(e.hours), 0);
         const totalHours = billableHours + nonBillableHours;
-        const billableAmount = billableEntries.reduce((sum, e) => sum + Number(e.amount), 0);
+        const billableAmount = billableEntries.reduce((sum, e: HarvestEntry) => sum + Number(e.amount), 0);
 
         return {
           userId: user.id,
@@ -54,7 +57,7 @@ export async function GET(request: NextRequest) {
         };
       });
 
-    employeeAnalytics.sort((a, b) => b.billableHours - a.billableHours);
+    employeeAnalytics.sort((a: typeof employeeAnalytics[0], b: typeof employeeAnalytics[0]) => b.billableHours - a.billableHours);
 
     // Project metrics
     const projectMetrics = await prisma.project.findMany({
@@ -70,15 +73,18 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    type ProjectMetric = typeof projectMetrics[0];
+    type ProjectHarvestEntry = ProjectMetric['harvestEntries'][0];
+
     const projectAnalytics = projectMetrics
-      .filter((p) => p.harvestEntries.length > 0)
-      .map((project) => {
+      .filter((p: ProjectMetric) => p.harvestEntries.length > 0)
+      .map((project: ProjectMetric) => {
         const billableHours = project.harvestEntries
-          .filter((e) => e.billable)
-          .reduce((sum, e) => sum + Number(e.hours), 0);
+          .filter((e: ProjectHarvestEntry) => e.billable)
+          .reduce((sum, e: ProjectHarvestEntry) => sum + Number(e.hours), 0);
         const revenue = project.harvestEntries
-          .filter((e) => e.billable)
-          .reduce((sum, e) => sum + Number(e.amount), 0);
+          .filter((e: ProjectHarvestEntry) => e.billable)
+          .reduce((sum, e: ProjectHarvestEntry) => sum + Number(e.amount), 0);
         const budget = Number(project.budget);
         const spent = revenue;
 
@@ -100,15 +106,17 @@ export async function GET(request: NextRequest) {
       where: { date: { gte: dateFrom } },
     });
 
+    type AllEntry = typeof allEntries[0];
+
     const billableHours = allEntries
-      .filter((e) => e.billable)
-      .reduce((sum, e) => sum + Number(e.hours), 0);
+      .filter((e: AllEntry) => e.billable)
+      .reduce((sum, e: AllEntry) => sum + Number(e.hours), 0);
     const nonBillableHours = allEntries
-      .filter((e) => !e.billable)
-      .reduce((sum, e) => sum + Number(e.hours), 0);
+      .filter((e: AllEntry) => !e.billable)
+      .reduce((sum, e: AllEntry) => sum + Number(e.hours), 0);
     const totalRevenue = allEntries
-      .filter((e) => e.billable)
-      .reduce((sum, e) => sum + Number(e.amount), 0);
+      .filter((e: AllEntry) => e.billable)
+      .reduce((sum, e: AllEntry) => sum + Number(e.amount), 0);
     const totalHours = billableHours + nonBillableHours;
 
     return NextResponse.json({

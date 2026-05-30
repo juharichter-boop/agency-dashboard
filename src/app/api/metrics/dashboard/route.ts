@@ -24,11 +24,12 @@ export async function GET(request: NextRequest) {
       _sum: { hours: true, amount: true },
     });
 
+    type HarvestData = typeof harvestData[0];
     const billableHours = harvestData
-      .find((d) => d.billable)
+      .find((d: HarvestData) => d.billable)
       ?._sum.hours || 0;
     const totalRevenue = harvestData
-      .find((d) => d.billable)
+      .find((d: HarvestData) => d.billable)
       ?._sum.amount || 0;
 
     const openTasks = await prisma.asanaTask.count({
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate utilization rate
     const nonBillableHours = harvestData
-      .find((d) => !d.billable)
+      .find((d: HarvestData) => !d.billable)
       ?._sum.hours || 0;
     const totalHours = Number(billableHours || 0) + Number(nonBillableHours || 0);
     const utilizationRate = totalHours > 0
