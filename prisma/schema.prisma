@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  TEAM_LEAD
+  EMPLOYEE
+}
+
+enum EntryStatus {
+  INVOICED
+  UNINVOICED
+  PENDING
+}
+
+enum TaskStatus {
+  OPEN
+  COMPLETED
+  OVERDUE
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ON_HOLD
+  ARCHIVED
+}
+
+enum SyncStatus {
+  PENDING
+  IN_PROGRESS
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      UserRole @default(EMPLOYEE)
+
+  // External IDs for API integrations
+  slackId   String?  @unique
+  harvestId Int?     @unique
+  asanaId   String?  @unique
+
+  // Relations
+  slackMetrics      SlackMetric[]
+  harvestEntries    HarvestEntry[]
+  asanaTasks        AsanaTask[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SlackMetric {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date          DateTime
+  messageCount  Int      @default(0)
+  fileCount     Int      @default(0)
+  channelId     String?
+  channelName   String?
+  isBot         Boolean  @default(false)
+
+  timestamp     DateTime @default(now())
+
+  @@index([userId])
+  @@index([date])
+  @@index([channelId])
+}
+
+model HarvestEntry {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  date          DateTime
+  hours         Decimal  @db.Numeric(10, 2)
+  billable      Boolean  @default(true)
+  amount        Decimal  @db.Numeric(12, 2) @default(0)
+  status        EntryStatus @default(UNINVOICED)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([projectId])
+  @@index([date])
+  @@index([status])
+}
+
+model AsanaTask {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  externalTaskId String
+  status        TaskStatus
+  dueDate       DateTime?
+  completedAt   DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([externalTaskId])
+  @@index([userId])
+  @@index([projectId])
+  @@index([status])
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  name          String
+  externalId    String?  @unique
+  clientId      String?
+  client        Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  budget        Decimal  @db.Numeric(12, 2) @default(0)
+  status        ProjectStatus @default(ACTIVE)
+
+  harvestEntries HarvestEntry[]
+  asanaTasks    AsanaTask[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([status])
+}
+
+model Client {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  externalId    String?  @unique
+
+  projects      Project[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model SyncLog {
+  id            String   @id @default(cuid())
+  entityType    String   // "slack", "harvest", "asana"
+  status        SyncStatus
+  lastSyncedAt  DateTime?
+  nextSyncAt    DateTime?
+  errorMessage  String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([entityType])
+  @@index([status])
+}
